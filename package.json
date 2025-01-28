@@ -1,0 +1,18 @@
+{
+  "name": "ajax-parakey-node",
+  "version": "1.0.0",
+  "description": "Serverless function for unarming Ajax system via Parakey webhook",
+  "main": "api/parakey-webhook.js",
+  "scripts": {
+    "start": "node api/parakey-webhook.js",
+    "dev": "nodemon --watch api/ api/parakey-webhook.js"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
