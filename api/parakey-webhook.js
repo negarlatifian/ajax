@@ -1,17 +1,11 @@
 require('dotenv').config();
 const axios = require('axios');
-const express = require('express');
-const app = express();
-const port = 3000;
 
 // Load config from environment variables
 const AJAX_INTEGRATION_ID = process.env.AJAX_INTEGRATION_ID;
 const AJAX_API_KEY = process.env.AJAX_API_KEY;
 const AJAX_BASE_URL = process.env.AJAX_BASE_URL;
 const PARAKEY_WEBHOOK_SECRET = process.env.PARAKEY_WEBHOOK_SECRET;
-
-// Middleware to parse JSON bodies
-app.use(express.json());
 
 // Validate environment variables
 function validateEnvironmentVariables() {
@@ -50,24 +44,16 @@ async function unarmAjaxSystem() {
   }
 }
 
-// Route to handle the Parakey webhook
-app.post('/api/parakey-webhook', async (req, res) => {
+// Exported handler function for Vercel serverless function
+module.exports = async (req, res) => {
   try {
     if (req.method !== 'POST') {
       res.status(405).send('Method Not Allowed');
       return;
     }
 
-    // ↓↓↓ ADDED: explicit JSON parsing with error handling
-    let eventData;
-    try {
-      eventData =
-        typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    } catch (err) {
-      console.error('Error parsing JSON body:', err);
-      res.status(400).send('Bad Request - Invalid JSON');
-      return;
-    }
+    // No need to parse JSON body; Vercel automatically parses it
+    const eventData = req.body;
 
     // Check if the event indicates a door unlock
     if (eventData.event === 'door_unlocked') {
@@ -89,9 +75,4 @@ app.post('/api/parakey-webhook', async (req, res) => {
       },
     });
   }
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+};
